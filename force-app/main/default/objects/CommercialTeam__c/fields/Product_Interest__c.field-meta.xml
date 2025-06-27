@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Product_Interest__c</fullName>
+    <description>Main Product of interest</description>
+    <label>Product Interest</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Meal Voucher</fullName>
+                <default>false</default>
+                <label>Meal Voucher</label>
+            </value>
+            <value>
+                <fullName>Gift</fullName>
+                <default>false</default>
+                <label>Gift</label>
+            </value>
+            <value>
+                <fullName>Travel</fullName>
+                <default>false</default>
+                <label>Travel</label>
+            </value>
+            <value>
+                <fullName>Incentivos</fullName>
+                <default>false</default>
+                <label>Incentivos</label>
+            </value>
+            <value>
+                <fullName>Beneficios</fullName>
+                <default>false</default>
+                <label>Beneficios</label>
+            </value>
+            <value>
+                <fullName>Natal</fullName>
+                <default>false</default>
+                <label>Natal</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>France_Commercial_Team</fullName>
+    <active>true</active>
+    <label>France Commercial Team</label>
+    <picklistValues>
+        <picklist>Country_Code__c</picklist>
+        <values>
+            <fullName>FR</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Employee_Range__c</picklist>
+        <values>
+            <fullName>1-100</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>101-500</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>501%2B</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Product_Interest__c</picklist>
+        <values>
+            <fullName>Gift</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Meal Voucher</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Travel</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>
