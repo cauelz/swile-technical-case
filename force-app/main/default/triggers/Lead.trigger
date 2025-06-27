@@ -1,3 +1,3 @@
-trigger Lead on SOBJECT (before insert, before update) {
-
+trigger Lead on Lead (before insert, before update) {
+    
 }

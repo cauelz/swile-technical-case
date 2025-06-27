@@ -1,3 +1,3 @@
-trigger Opportunity on SOBJECT (before insert, before update) {
+trigger Opportunity on Opportunity (before insert, before update) {
 
 }
