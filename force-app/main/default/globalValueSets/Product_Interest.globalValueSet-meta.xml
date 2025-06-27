@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>Meal Voucher</fullName>
+        <default>false</default>
+        <label>Meal Voucher</label>
+    </customValue>
+    <customValue>
+        <fullName>Gift</fullName>
+        <default>false</default>
+        <label>Gift</label>
+    </customValue>
+    <customValue>
+        <fullName>Travel</fullName>
+        <default>false</default>
+        <label>Travel</label>
+    </customValue>
+    <customValue>
+        <fullName>Incentivos</fullName>
+        <default>false</default>
+        <label>Incentivos</label>
+    </customValue>
+    <customValue>
+        <fullName>Beneficios</fullName>
+        <default>false</default>
+        <label>Beneficios</label>
+    </customValue>
+    <customValue>
+        <fullName>Natal</fullName>
+        <default>false</default>
+        <label>Natal</label>
+    </customValue>
+    <masterLabel>Product Interest</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
