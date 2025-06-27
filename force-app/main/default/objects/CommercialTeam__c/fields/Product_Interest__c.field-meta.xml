@@ -9,38 +9,6 @@
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
-        <valueSetDefinition>
-            <sorted>false</sorted>
-            <value>
-                <fullName>Meal Voucher</fullName>
-                <default>false</default>
-                <label>Meal Voucher</label>
-            </value>
-            <value>
-                <fullName>Gift</fullName>
-                <default>false</default>
-                <label>Gift</label>
-            </value>
-            <value>
-                <fullName>Travel</fullName>
-                <default>false</default>
-                <label>Travel</label>
-            </value>
-            <value>
-                <fullName>Incentivos</fullName>
-                <default>false</default>
-                <label>Incentivos</label>
-            </value>
-            <value>
-                <fullName>Beneficios</fullName>
-                <default>false</default>
-                <label>Beneficios</label>
-            </value>
-            <value>
-                <fullName>Natal</fullName>
-                <default>false</default>
-                <label>Natal</label>
-            </value>
-        </valueSetDefinition>
+        <valueSetName>Product_Interest</valueSetName>
     </valueSet>
 </CustomField>

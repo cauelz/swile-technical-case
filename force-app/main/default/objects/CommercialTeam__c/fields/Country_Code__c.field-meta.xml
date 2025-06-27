@@ -10,18 +10,6 @@
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
-        <valueSetDefinition>
-            <sorted>false</sorted>
-            <value>
-                <fullName>BR</fullName>
-                <default>false</default>
-                <label>BR</label>
-            </value>
-            <value>
-                <fullName>FR</fullName>
-                <default>false</default>
-                <label>FR</label>
-            </value>
-        </valueSetDefinition>
+        <valueSetName>Country_Code</valueSetName>
     </valueSet>
 </CustomField>

@@ -8,23 +8,6 @@
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
-        <valueSetDefinition>
-            <sorted>false</sorted>
-            <value>
-                <fullName>1-100</fullName>
-                <default>false</default>
-                <label>1-100</label>
-            </value>
-            <value>
-                <fullName>101-500</fullName>
-                <default>false</default>
-                <label>101-500</label>
-            </value>
-            <value>
-                <fullName>501+</fullName>
-                <default>false</default>
-                <label>501+</label>
-            </value>
-        </valueSetDefinition>
+        <valueSetName>Employee_Range</valueSetName>
     </valueSet>
 </CustomField>
