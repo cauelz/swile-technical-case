@@ -12,7 +12,7 @@ public with sharing class TeamMemberRespository implements Repository {
     // Método utilitário extra, não faz parte da interface
     public List<Team_Member__c> findByCommercialTeamKey(List<String> key) {
         return [
-            SELECT Id, Commercial_Team__c, User__c, Commercial_Team__r.Key__c
+            SELECT Id, Commercial_Team__c, User__c, Commercial_Team__r.Key__c, Counter__c
             FROM Team_Member__c
             WHERE Commercial_Team__r.Key__c IN :key
             AND Id NOT IN (SELECT Team_Member__c 

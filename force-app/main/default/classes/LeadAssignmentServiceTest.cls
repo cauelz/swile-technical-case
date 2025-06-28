@@ -40,27 +40,12 @@ public with sharing class LeadAssignmentServiceTest {
 
         List<User> users = [SELECT Id FROM User WHERE LastName IN ('User1', 'User2', 'User3', 'User4')];
 
-        Team_Member__c tm1 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[0].Id);
-        Team_Member__c tm2 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[1].Id);
-        Team_Member__c tm3 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[2].Id);
-        Team_Member__c tm4 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[3].Id);
+        Team_Member__c tm1 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[0].Id, Counter__c=0);
+        Team_Member__c tm2 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[1].Id, Counter__c=0);
+        Team_Member__c tm3 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[2].Id, Counter__c=0);
+        Team_Member__c tm4 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[3].Id, Counter__c=0);
         insert new List<Team_Member__c>{tm1, tm2, tm3, tm4};
-        System.debug('Team Members inserted: ' + [SELECT Id, User__c FROM Team_Member__c WHERE Commercial_Team__c = :team.Id]);
-        // Gerar o mês atual no formato yyyy/MM
-        Date today = Date.today();
-        String year = String.valueOf(today.year());
-        String month = String.valueOf(today.month());
-        if (month.length() == 1) {
-            month = '0' + month;
-        }
-        String currentMonth = year + '/' + month;
 
-        Deals_Counter__c dc1 = new Deals_Counter__c(Team_Member__c=tm1.Id, Count__c=0, Month__c=currentMonth);
-        Deals_Counter__c dc2 = new Deals_Counter__c(Team_Member__c=tm2.Id, Count__c=0, Month__c=currentMonth);
-        Deals_Counter__c dc3 = new Deals_Counter__c(Team_Member__c=tm3.Id, Count__c=0, Month__c=currentMonth);
-        Deals_Counter__c dc4 = new Deals_Counter__c(Team_Member__c=tm4.Id, Count__c=0, Month__c=currentMonth);
-        insert new List<Deals_Counter__c>{dc1, dc2, dc3, dc4};
-        System.debug('Counters inserted: ' + [SELECT Id, Month__c, Key__c FROM Deals_Counter__c WHERE Team_Member__c IN :new List<Id>{tm1.Id, tm2.Id, tm3.Id, tm4.Id}]);
         Lead lead1 = new Lead(
             LastName = 'Teste1',
             Company = 'Empresa1',
@@ -108,10 +93,11 @@ public with sharing class LeadAssignmentServiceTest {
         Set<Id> expectedOwners = new Set<Id>{users[0].Id, users[1].Id, users[2].Id, users[3].Id};
         System.assertEquals(expectedOwners, ownerIds, 'Owner should be the users created in setup');
 
-        // Verifica se os counters dos Deals_Counter__c foram incrementados corretamente
-        List<Deals_Counter__c> counters = [SELECT Id, Count__c FROM Deals_Counter__c WHERE Team_Member__c IN :new List<Id>{tm1.Id, tm2.Id, tm3.Id, tm4.Id}];
-        for (Deals_Counter__c dc : counters) {
-            System.assertEquals(1, dc.Count__c, 'Every Counter should be incremented by 1');
-        }
+        // Verifica se os contadores dos Team Members foram incrementados corretamente
+        List<Team_Member__c> updatedTeamMembers = [SELECT Id, Counter__c FROM Team_Member__c WHERE Id IN :new List<Id>{tm1.Id, tm2.Id, tm3.Id, tm4.Id}];
+        System.assertEquals(1, updatedTeamMembers[0].Counter__c, 'Counter for Team Member 1 should be 1');
+        System.assertEquals(1, updatedTeamMembers[1].Counter__c, 'Counter for Team Member 2 should be 1');
+        System.assertEquals(1, updatedTeamMembers[2].Counter__c, 'Counter for Team Member 3 should be 1');
+        System.assertEquals(1, updatedTeamMembers[3].Counter__c, 'Counter for Team Member 4 should be 1');
     }
 }
