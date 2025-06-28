@@ -142,7 +142,7 @@ public with sharing class LeadAssignmentServiceTest {
         Lead updatedLead2 = [SELECT Id, OwnerId FROM Lead WHERE Id = :lead2.Id];
 
         System.assertEquals(user1.Id, updatedLead1.OwnerId, 'Lead1 should be assigned');
-        System.assertNotEquals(user1.Id, updatedLead2.OwnerId, 'Lead2 should keep the original owner');
+        System.assertEquals(UserInfo.getUserId(), updatedLead2.OwnerId, 'Lead2 should keep the original owner');
     }
 
     @isTest
@@ -198,7 +198,7 @@ public with sharing class LeadAssignmentServiceTest {
             Product_Interest__c='Gift',
             RecordTypeId=recordTypeId);
         insert team;
-        
+
         List<User> users = [SELECT Id FROM User WHERE LastName = 'User1'];
         Team_Member__c tm1 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[0].Id, Counter__c=0);
         insert tm1;

@@ -23,6 +23,5 @@ public with sharing class AssignmentService {
 
     public void processAssignments() {
         List<SObject> recordsToUpdate = this.service.process(this.records);
-        update recordsToUpdate;
     }
 }

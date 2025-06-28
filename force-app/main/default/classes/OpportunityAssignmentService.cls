@@ -9,9 +9,11 @@ public with sharing class OpportunityAssignmentService implements Assignment {
     public List<SObject> process(List<SObject> records) {
         List<Opportunity> opportunities = getOpportunitiesToProcess(records);
         Map<String, Opportunity> opportunityMap = buildOpportunityMappedByKey(opportunities);
+        System.debug('Opportunity Map: ' + opportunityMap);
         List<Team_Member__c> teamMembers = getAvailableTeamMembers(opportunityMap);
+        System.debug('Available Team Members: ' + teamMembers);
         List<Opportunity> processedOpportunities = assignOpportunitiesToTeamMembers(opportunities, teamMembers);
-
+        System.debug('Processed Opportunities: ' + processedOpportunities);
         return (List<SObject>) opportunities;
     }
 
