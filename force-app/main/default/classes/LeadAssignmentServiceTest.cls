@@ -26,7 +26,7 @@ public with sharing class LeadAssignmentServiceTest {
     }
 
     @isTest
-    static void testLeadAssignmentProcess() {
+    static void shouldDistributeLeadsEquallyAmongTeamMembers_WhenProcessingLeads() {
         
         Id recordTypeId = Schema.SObjectType.CommercialTeam__c.getRecordTypeInfosByDeveloperName().get('France_Commercial_Team').getRecordTypeId();
 
@@ -99,5 +99,132 @@ public with sharing class LeadAssignmentServiceTest {
         System.assertEquals(1, updatedTeamMembers[1].Counter__c, 'Counter for Team Member 2 should be 1');
         System.assertEquals(1, updatedTeamMembers[2].Counter__c, 'Counter for Team Member 3 should be 1');
         System.assertEquals(1, updatedTeamMembers[3].Counter__c, 'Counter for Team Member 4 should be 1');
+    }
+
+    @isTest
+    static void shouldIgnoreLeadsWithoutAvailableTeamMember() {
+        Id recordTypeId = Schema.SObjectType.CommercialTeam__c.getRecordTypeInfosByDeveloperName().get('France_Commercial_Team').getRecordTypeId();
+        CommercialTeam__c team = new CommercialTeam__c(
+            Name='Equipe Teste', 
+            Country_Code__c='FR', 
+            Employee_Range__c='101-500',
+            Product_Interest__c='Gift',
+            RecordTypeId=recordTypeId);
+        insert team;
+        List<User> users = [SELECT Id FROM User WHERE LastName IN ('User1')];
+        Team_Member__c tm1 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[0].Id, Counter__c=0);
+        insert tm1;
+        Lead lead1 = new Lead(
+            LastName = 'Teste1',
+            Company = 'Empresa1',
+            Product_Interest__c = 'Gift',
+            Country_Code__c = 'FR',
+            Employee_Range__c = '101-500'
+        );
+        Lead lead2 = new Lead(
+            LastName = 'Teste2',
+            Company = 'Empresa2',
+            Product_Interest__c = 'Gift',
+            Country_Code__c = 'BR',
+            Employee_Range__c = '101-500'
+        );
+        
+        List<SObject> records = new List<SObject>{lead1, lead2};
+
+        Test.startTest();
+
+        insert records;
+
+        Test.stopTest();
+
+        User user1 = [SELECT Id FROM User WHERE LastName = 'User1' LIMIT 1];
+        Lead updatedLead1 = [SELECT Id, OwnerId FROM Lead WHERE Id = :lead1.Id];
+        Lead updatedLead2 = [SELECT Id, OwnerId FROM Lead WHERE Id = :lead2.Id];
+
+        System.assertEquals(user1.Id, updatedLead1.OwnerId, 'Lead1 should be assigned');
+        System.assertNotEquals(user1.Id, updatedLead2.OwnerId, 'Lead2 should keep the original owner');
+    }
+
+    @isTest
+    static void shouldAssignAllLeadsToSingleTeamMember_WhenOnlyOneAvailable() {
+        Id recordTypeId = Schema.SObjectType.CommercialTeam__c.getRecordTypeInfosByDeveloperName().get('France_Commercial_Team').getRecordTypeId();
+        CommercialTeam__c team = new CommercialTeam__c(
+            Name='Equipe Única', 
+            Country_Code__c='FR', 
+            Employee_Range__c='101-500',
+            Product_Interest__c='Gift',
+            RecordTypeId=recordTypeId);
+        insert team;
+        List<User> users = [SELECT Id FROM User WHERE LastName = 'User1'];
+        Team_Member__c tm1 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[0].Id, Counter__c=0);
+        insert tm1;
+        Lead lead1 = new Lead(
+            LastName = 'Teste1',
+            Company = 'Empresa1',
+            Product_Interest__c = 'Gift',
+            Country_Code__c = 'FR',
+            Employee_Range__c = '101-500'
+        );
+        Lead lead2 = new Lead(
+            LastName = 'Teste2',
+            Company = 'Empresa2',
+            Product_Interest__c = 'Gift',
+            Country_Code__c = 'FR',
+            Employee_Range__c = '101-500'
+        );
+        List<SObject> records = new List<SObject>{lead1, lead2};
+        Test.startTest();
+        insert new List<Lead>{lead1, lead2};
+        Test.stopTest();
+        // Ambos os Leads devem ser atribuídos ao mesmo usuário
+        List<Lead> updatedLeads = [SELECT Id, OwnerId FROM Lead WHERE Id IN :new List<Id>{lead1.Id, lead2.Id}];
+        Set<Id> ownerIds = new Set<Id>();
+        for (Lead l : updatedLeads) {
+            ownerIds.add(l.OwnerId);
+        }
+        System.assertEquals(1, ownerIds.size(), 'Both Leads should be assigned to the same user');
+        // O contador do Team Member deve ser 2
+        Team_Member__c updatedTm = [SELECT Id, Counter__c FROM Team_Member__c WHERE Id = :tm1.Id];
+        System.assertEquals(2, updatedTm.Counter__c, 'Counter for Team Member should be 2');
+    }
+
+    @isTest
+    static void shouldNotAssignLead_WhenOnlyTeamMemberIsOnAbsence() {
+        Id recordTypeId = Schema.SObjectType.CommercialTeam__c.getRecordTypeInfosByDeveloperName().get('France_Commercial_Team').getRecordTypeId();
+        CommercialTeam__c team = new CommercialTeam__c(
+            Name='Equipe Férias', 
+            Country_Code__c='FR', 
+            Employee_Range__c='101-500',
+            Product_Interest__c='Gift',
+            RecordTypeId=recordTypeId);
+        insert team;
+        
+        List<User> users = [SELECT Id FROM User WHERE LastName = 'User1'];
+        Team_Member__c tm1 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[0].Id, Counter__c=0);
+        insert tm1;
+
+        Absence__c absence = new Absence__c(
+            Team_Member__c = tm1.Id,
+            Start_Date__c = System.today().addDays(-1),
+            End_Date__c = System.today().addDays(1),
+            Is_Returned__c = false
+        );
+        insert absence;
+
+        Lead lead1 = new Lead(
+            LastName = 'Teste1',
+            Company = 'Empresa1',
+            Product_Interest__c = 'Gift',
+            Country_Code__c = 'FR',
+            Employee_Range__c = '101-500'
+        );
+
+        Test.startTest();
+        insert lead1;
+        Test.stopTest();
+
+        Lead updatedLead = [SELECT Id, OwnerId FROM Lead WHERE Id = :lead1.Id];
+        User user1 = [SELECT Id FROM User WHERE LastName = 'User1' LIMIT 1];
+        System.assertNotEquals(user1.Id, updatedLead.OwnerId, 'Lead should not be assigned if the only Team Member is on absence');
     }
 }
