@@ -18,6 +18,7 @@ public with sharing class CounterResetBatch implements Database.Batchable<SObjec
             tm.Counter__c = 0;
             toUpdate.add(tm);
         }
+        
         if (!toUpdate.isEmpty()) {
             update toUpdate;
         }
