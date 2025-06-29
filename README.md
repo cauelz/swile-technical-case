@@ -15,7 +15,12 @@
 >
 > **Contents:**
 >
-> 1. `docs/` – ER diagrams and schema exports
+> 1. `docs/` – ER diagrams, schema exports, and documentation
+>     - [Data Model](docs/DataModel.md)
+>     - [AbsenceManager LWC Documentation](docs/AbsenceManager.md)
+>     - [Data Model Improvement Suggestions](docs/DataModel_Improvements.md)
+>     - [Lead Assignment Service Documentation](docs/LeadAssignmentService.md)
+>     - [Opportunity Assignment Service Documentation](docs/OpportunityAssignmentService.md)
 > 2. `force-app/main/default/objects/` – Custom object and field definitions
 > 3. `force-app/main/default/classes/` – Apex classes and batch jobs
 > 4. `force-app/main/default/triggers/` – Apex triggers for Lead, Opportunity, and Reassign actions
