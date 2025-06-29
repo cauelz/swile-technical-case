@@ -21,7 +21,7 @@ export default class AbsenceManager extends LightningElement {
   columns = COLUMNS;
   isModalOpen = false;
   @api recordId;
-  absenceId = undefined;
+  absenceId;
   modalTitle = '';
   isLoading = true;
   isEditing = false; 
@@ -44,7 +44,7 @@ export default class AbsenceManager extends LightningElement {
 
   handleNew() {
     this.isEditing = false;
-    this.absenceId = undefined;
+    this.absenceId = null;
     this.modalTitle = 'New Absence';
     this.isModalOpen = true;
   }
