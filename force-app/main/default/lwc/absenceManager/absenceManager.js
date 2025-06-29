@@ -1,5 +1,7 @@
 import { LightningElement, wire, track, api } from 'lwc';
 import getTeamAbsences from '@salesforce/apex/AbsenceController.getTeamAbsences';
+import deleteAbsenceApex from '@salesforce/apex/AbsenceController.deleteAbsence';
+import { refreshApex } from '@salesforce/apex';
 
 const COLUMNS = [
   { label: 'Name', fieldName: 'Name' },
@@ -17,29 +19,36 @@ const COLUMNS = [
 ];
 
 export default class AbsenceManager extends LightningElement {
-  @track absences = null;
+  @track absences = [];
   columns = COLUMNS;
   isModalOpen = false;
   @api recordId;
-  absenceId;
+  absenceId = null;
   modalTitle = '';
   isLoading = true;
-  isEditing = false; 
+  isEditing = false;
+  wiredAbsencesResult;
+  formError = '';
 
   @wire(getTeamAbsences, { teamId: '$recordId' })
-  wiredAbsences({ error, data }) {
+  wiredAbsences(result) {
+    this.wiredAbsencesResult = result;
+    const { error, data } = result;
+    this.isLoading = false;
     if (data) {
-        
-        if(data.length !== 0) {
-            this.absences = data;
-        }
-
-        this.isLoading = false;
+      this.absences = Array.isArray(data) ? data : [];
     } else if (error) {
-        this.absences = null;
-        this.isLoading = false;
-        console.error('Error fetching absences:', error);
+      this.absences = [];
+      console.error('Error fetching absences:', error);
     }
+  }
+
+  get hasAbsences() {
+    return this.absences && this.absences.length > 0;
+  }
+
+  get showNoAbsencesMessage() {
+    return !this.isLoading && (!this.absences || this.absences.length === 0);
   }
 
   handleNew() {
@@ -47,6 +56,7 @@ export default class AbsenceManager extends LightningElement {
     this.absenceId = null;
     this.modalTitle = 'New Absence';
     this.isModalOpen = true;
+    this.formError = '';
   }
 
   handleRowAction(event) {
@@ -57,6 +67,7 @@ export default class AbsenceManager extends LightningElement {
       this.modalTitle = 'Edit Absence';
       this.isModalOpen = true;
       this.isEditing = true;
+      this.formError = '';
     } else if (action === 'delete') {
       this.deleteAbsence(row.Id);
     }
@@ -64,12 +75,33 @@ export default class AbsenceManager extends LightningElement {
 
   closeModal() {
     this.isModalOpen = false;
-    this.isEditing   = false;
-    this.absenceId   = null;
+    this.isEditing = false;
+    this.absenceId = null;
+    this.formError = '';
   }
 
-  handleSuccess() {
+  async handleSuccess() {
     this.isModalOpen = false;
-    return refreshApex(this.wiredAbsences);
+    this.isEditing = false;
+    this.absenceId = null;
+    await refreshApex(this.wiredAbsencesResult);
+  }
+
+  handleFormError(event) {
+    this.formError = 'There was an error saving the absence.';
+    // Optionally, you can show a toast here
+    // eslint-disable-next-line no-console
+    console.error('Form error:', event.detail);
+  }
+
+  async deleteAbsence(absenceId) {
+    try {
+      await deleteAbsenceApex({ absenceId });
+      await refreshApex(this.wiredAbsencesResult);
+    } catch (error) {
+      this.formError = 'Error deleting absence.';
+      // eslint-disable-next-line no-console
+      console.error('Error deleting absence:', error);
+    }
   }
 }

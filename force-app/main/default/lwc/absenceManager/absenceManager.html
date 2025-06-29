@@ -1,21 +1,23 @@
 <template>
   <lightning-card title="Manage Absences">
     <template if:true={isLoading}>
-        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+      <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
     </template>
     <lightning-button label="New Absence" icon-name="action:new" onclick={handleNew} class="slds-m-vertical_medium"></lightning-button>
-    <template if:true={absences}>
-        <lightning-datatable
+    <template if:true={hasAbsences}>
+      <lightning-datatable
         key-field="Id"
         data={absences}
         columns={columns}
         onrowaction={handleRowAction}
         class="slds-m-vertical_medium">
-        </lightning-datatable>
+      </lightning-datatable>
     </template>
-
+    <template if:true={showNoAbsencesMessage}>
+      <div class="slds-p-around_medium slds-text-color_weak">No absences found for this team.</div>
+    </template>
   </lightning-card>
-  
+
   <template if:true={isModalOpen}>
     <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
       <div class="slds-modal__container">
@@ -24,35 +26,34 @@
           <h2 class="slds-modal__title">{modalTitle}</h2>
         </header>
         <div class="slds-modal__content">
-            <template if:true={isEditing}>
-                <lightning-record-edit-form object-api-name="Absence__c" record-id={absenceId} onsuccess={handleSuccess}>
-                    <lightning-messages></lightning-messages>
-                    <lightning-input-field field-name="Start_Date__c"></lightning-input-field>
-                    <lightning-input-field field-name="End_Date__c"></lightning-input-field>
-                    <lightning-input-field field-name="Is_Returned__c"></lightning-input-field>
-                    <lightning-input-field field-name="Team_Member__c"></lightning-input-field>
-                    <div class="slds-modal__footer">
-                        <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
-                        <lightning-button type="submit" variant="brand" label="Salvar" class="slds-m-horizontal_medium"></lightning-button>
-                    </div>
-                </lightning-record-edit-form>
-            </template>
-            <template if:false={isEditing}>
-                <lightning-record-edit-form object-api-name="Absence__c" onsuccess={handleSuccess}>
-                    <lightning-messages></lightning-messages>
-                    <lightning-input-field field-name="Start_Date__c"></lightning-input-field>
-                    <lightning-input-field field-name="End_Date__c"></lightning-input-field>
-                    <lightning-input-field field-name="Is_Returned__c"></lightning-input-field>
-                    <lightning-input-field field-name="Team_Member__c"></lightning-input-field>
-                    <div class="slds-modal__footer">
-                        <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
-                        <lightning-button type="submit" variant="brand" label="Salvar" ></lightning-button>
-                    </div>
-                </lightning-record-edit-form>
-            </template>
+          <template if:true={isEditing}>
+            <lightning-record-edit-form object-api-name="Absence__c" record-id={absenceId} onsuccess={handleSuccess} onerror={handleFormError}>
+              <lightning-messages></lightning-messages>
+              <lightning-input-field field-name="Start_Date__c"></lightning-input-field>
+              <lightning-input-field field-name="End_Date__c"></lightning-input-field>
+              <lightning-input-field field-name="Is_Returned__c"></lightning-input-field>
+              <lightning-input-field field-name="Team_Member__c"></lightning-input-field>
+              <div class="slds-modal__footer">
+                <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
+                <lightning-button type="submit" variant="brand" label="Salvar" class="slds-m-horizontal_medium"></lightning-button>
+              </div>
+            </lightning-record-edit-form>
+          </template>
+          <template if:false={isEditing}>
+            <lightning-record-edit-form object-api-name="Absence__c" onsuccess={handleSuccess} onerror={handleFormError}>
+              <lightning-messages></lightning-messages>
+              <lightning-input-field field-name="Start_Date__c"></lightning-input-field>
+              <lightning-input-field field-name="End_Date__c"></lightning-input-field>
+              <lightning-input-field field-name="Is_Returned__c"></lightning-input-field>
+              <lightning-input-field field-name="Team_Member__c"></lightning-input-field>
+              <div class="slds-modal__footer">
+                <lightning-button variant="neutral" label="Cancelar" onclick={closeModal}></lightning-button>
+                <lightning-button type="submit" variant="brand" label="Salvar"></lightning-button>
+              </div>
+            </lightning-record-edit-form>
+          </template>
         </div>
       </div>
-      
     </section>
   </template>
 </template>
