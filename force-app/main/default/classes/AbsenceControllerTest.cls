@@ -66,7 +66,7 @@ public with sharing class AbsenceControllerTest {
         Absence__c upserted = AbsenceController.upsertAbsence(abs);
         System.assert(upserted.Id != null, 'Absence should be inserted');
         AbsenceController.deleteAbsence(upserted.Id);
-        Absence__c deleted = [SELECT Id FROM Absence__c WHERE Id = :upserted.Id LIMIT 1];
-        System.assert(deleted == null, 'Absence should be deleted');
+        Absence__c deleted = [SELECT Id, isDeleted FROM Absence__c WHERE Id = :upserted.Id LIMIT 1 ALL ROWS];
+        System.assert(deleted.IsDeleted == TRUE, 'Absence should be deleted');
     }
 }
