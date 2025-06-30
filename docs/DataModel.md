@@ -65,8 +65,6 @@ This document describes the custom data model for fair, per-month Lead/Opportuni
 - **Id**  
 - **AccountId** (Lookup → Account)  
 - **Product_Interest__c** (Picklist/Text)  
-- **Country_Code__c** (Formula → Account.Country_Code__c)  
-- **Employee_Range__c** (Formula → Account.Employee_Range__c)  
 
 > Mirrors Lead fields via formulas and links to Account for consistency.
 
