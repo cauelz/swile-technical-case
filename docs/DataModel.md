@@ -138,8 +138,6 @@ erDiagram
     OPPORTUNITY {
         string Id
         string Product_Interest__c
-        string Country_Code__c
-        string Employee_Range__c
         string AccountId
     }
     ACCOUNT {

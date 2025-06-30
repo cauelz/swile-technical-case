@@ -160,15 +160,18 @@ public with sharing class OpportunityAssignmentServiceTest {
             Product_Interest__c='Gift',
             RecordTypeId=recordTypeId);
         insert team;
+
         List<User> users = [SELECT Id FROM User WHERE LastName = 'User1'];
         Team_Member__c tm1 = new Team_Member__c(Commercial_Team__c=team.Id, User__c=users[0].Id, Counter__c=0);
         insert tm1;
+
         Account account = new Account(
             Name = 'Test Account',
             Country_Code__c = 'FR',
             Employee_Range__c = '101-500'
         );
         insert account;
+
         Opportunity opp1 = new Opportunity(
             Name = 'Opp1',
             StageName = 'Prospecting',
@@ -184,11 +187,11 @@ public with sharing class OpportunityAssignmentServiceTest {
             AccountId = account.Id
         );
         List<SObject> records = new List<SObject>{opp1, opp2};
+
         Test.startTest();
         insert new List<Opportunity>{opp1, opp2};
-        OpportunityAssignmentService service = new OpportunityAssignmentService();
-        service.process(records);
         Test.stopTest();
+
         List<Opportunity> updatedOpps = [SELECT Id, OwnerId FROM Opportunity WHERE Id IN :new List<Id>{opp1.Id, opp2.Id}];
         Set<Id> ownerIds = new Set<Id>();
         for (Opportunity o : updatedOpps) {
