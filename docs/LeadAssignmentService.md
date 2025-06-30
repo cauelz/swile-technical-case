@@ -16,10 +16,11 @@ Each Lead is assigned to the Team Member (within the matching Commercial Team) w
   Processes a list of records, filters for Leads, and assigns each Lead to the most suitable Team Member based on workload and matching criteria.
 - **Workflow:**
   1. **Filter Leads:** Extracts Lead records from the input list.
-  2. **Key Mapping:** Maps Leads using a composite key: `Product_Interest__c`, `Country_Code__c`, and `Employee_Range__c`.
+  2. **Key Mapping:** Maps Leads using a composite key: `Product_Interest__c`, `Country_Code__c`, and `Employee_Range__c` (all from Lead).
   3. **Fetch Team Members:** Retrieves available Team Members for each key using the repository.
   4. **Assignment:** Assigns each Lead to the Team Member with the lowest `Counter__c` (workload) in the relevant Commercial Team.
   5. **Update Records:** Increments the assigned Team Member’s `Counter__c` and updates the Lead’s `OwnerId`.
+  6. **Return Value:** Returns the processed Leads as a list. If no assignment is possible, returns an empty list.
 
 ## Helper Methods
 
@@ -28,6 +29,15 @@ Each Lead is assigned to the Team Member (within the matching Commercial Team) w
 
 - **`buildLeadMappedByKey(leads)`**  
   Maps Leads by a composite key for efficient assignment.
+
+- **`extractEmployeeRangesFromLeads(leadMap)`**  
+  Extracts unique Employee Ranges from Lead records.
+
+- **`extractCountryCodesFromLeads(leadMap)`**  
+  Extracts unique Country Codes from Lead records.
+
+- **`extractProductInterestsFromLeads(leadMap)`**  
+  Extracts unique Product Interests from Lead records.
 
 - **`getAvailableTeamMembers(employeeRanges, countryCodes, productInterests)`**  
   Fetches Team Members matching the relevant Commercial Team criteria.
@@ -44,6 +54,7 @@ Each Lead is assigned to the Team Member (within the matching Commercial Team) w
 ## Implementation Notes
 
 - Utilizes the `TeamMemberRespository` for data access.
+- No explicit error handling for DML failures; all updates are attempted in bulk.
 - Requires custom fields:
   - On Lead: `Product_Interest__c`, `Country_Code__c`, `Employee_Range__c`
   - On Team_Member__c: `Counter__c`, `User__c`, `Commercial_Team__r.Key__c`
