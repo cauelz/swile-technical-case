@@ -1,32 +1,50 @@
-# LeadAssignmentService Documentation
+# LeadAssignmentService
 
-## Overview
+## Purpose
 
-The `LeadAssignmentService` Apex class is responsible for assigning Leads to Team Members based on business rules and balancing workload. It implements the `Assignment` interface and uses a repository pattern to fetch available Team Members.
+The `LeadAssignmentService` Apex class automates the assignment of Leads to Team Members, ensuring balanced workload distribution according to business rules. It implements the `Assignment` interface and leverages the repository pattern for data access.
 
-## Main Method
+## Algorithm
+
+**Round Robin with Least-Loaded Assignment:**
+Each Lead is assigned to the Team Member (within the matching Commercial Team) who currently has the lowest workload, as measured by the `Counter__c` field. This ensures fair and balanced distribution of Leads among available Team Members.
+
+## Core Functionality
 
 ### `process(List<SObject> records)`
-- **Purpose:** Processes a list of Lead records, assigning each to an appropriate Team Member and updating their workload counter.
-- **Logic Flow:**
-  1. Filters the input list to only include Leads.
-  2. Maps Leads by a composite key (Product Interest, Country Code, Employee Range).
-  3. Fetches available Team Members for each key using the repository.
-  4. Assigns each Lead to the Team Member with the lowest `Counter__c` in the relevant team.
-  5. Updates the Team Member's `Counter__c` and the Lead's `OwnerId`.
+- **Description:**  
+  Processes a list of records, filters for Leads, and assigns each Lead to the most suitable Team Member based on workload and matching criteria.
+- **Workflow:**
+  1. **Filter Leads:** Extracts Lead records from the input list.
+  2. **Key Mapping:** Maps Leads using a composite key: `Product_Interest__c`, `Country_Code__c`, and `Employee_Range__c`.
+  3. **Fetch Team Members:** Retrieves available Team Members for each key using the repository.
+  4. **Assignment:** Assigns each Lead to the Team Member with the lowest `Counter__c` (workload) in the relevant Commercial Team.
+  5. **Update Records:** Increments the assigned Team Member’s `Counter__c` and updates the Lead’s `OwnerId`.
 
 ## Helper Methods
-- `getLeadsToProcess(...)`: Filters and returns only Lead records from the input.
-- `buildLeadMappedByKey(...)`: Maps Leads by a composite key for assignment logic.
-- `getAvailableTeamMembers(...)`: Fetches Team Members for the relevant Commercial Teams.
-- `assignLeadsToTeamMembers(...)`: Core logic for assigning Leads and updating counters.
 
-## Assignment Logic
+- **`getLeadsToProcess(records)`**  
+  Filters and returns only Lead records from the input list.
+
+- **`buildLeadMappedByKey(leads)`**  
+  Maps Leads by a composite key for efficient assignment.
+
+- **`getAvailableTeamMembers(employeeRanges, countryCodes, productInterests)`**  
+  Fetches Team Members matching the relevant Commercial Team criteria.
+
+- **`assignLeadsToTeamMembers(leads, teamMembers)`**  
+  Assigns Leads to Team Members, updates counters, and returns the processed Leads.
+
+## Assignment Rules
+
 - Each Lead is assigned to a Team Member in the matching Commercial Team with the lowest workload (`Counter__c`).
 - Team Member counters are incremented after assignment.
-- If no Team Member is available for a Lead, it is skipped.
+- Leads without a matching Team Member are skipped.
 
-## Notes
-- Uses the `TeamMemberRespository` for data access.
-- Assumes the existence of custom fields: `Product_Interest__c`, `Country_Code__c`, `Employee_Range__c` on Lead and `Counter__c`, `User__c`, `Commercial_Team__r.Key__c` on Team_Member__c.
+## Implementation Notes
+
+- Utilizes the `TeamMemberRespository` for data access.
+- Requires custom fields:
+  - On Lead: `Product_Interest__c`, `Country_Code__c`, `Employee_Range__c`
+  - On Team_Member__c: `Counter__c`, `User__c`, `Commercial_Team__r.Key__c`
 - Designed for use in triggers or batch processes for automated Lead assignment.
